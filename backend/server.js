@@ -1,4 +1,4 @@
-require("dotenv").config(); // Load .env first
+require("dotenv").config();
 
 const express = require("express");
 const nodemailer = require("nodemailer");
@@ -9,10 +9,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ Debug: Show loaded environment variables
-console.log("Mongo URL:", process.env.MONGO_URL);
-console.log("Email:", process.env.EMAIL);
-
 // ✅ Connect to MongoDB
 mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
@@ -21,12 +17,37 @@ mongoose.connect(process.env.MONGO_URL, {
 .then(() => console.log("✅ MongoDB connected"))
 .catch(err => console.error("❌ MongoDB connection error:", err));
 
-// ✅ Define User model
+// ✅ User model
 const User = mongoose.model("User", new mongoose.Schema({
   email: String,
   otp: String,
   password: String,
 }));
+
+// ✅ OTP Log model
+const OtpLog = mongoose.model("OtpLog", new mongoose.Schema({
+  email: String,
+  requestedAt: {
+    type: Date,
+    default: Date.now
+  }
+}));
+
+// ✅ Root route
+app.get('/', (req, res) => {
+  res.send('✅ OTP Backend is Running');
+});
+
+// ✅ OTP usage count route
+app.get('/otp-usage-count', async (req, res) => {
+  try {
+    const count = await OtpLog.countDocuments();
+    res.json({ count });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error getting count' });
+  }
+});
 
 // ✅ Route to send OTP
 app.post("/send-otp", async (req, res) => {
@@ -54,12 +75,17 @@ app.post("/send-otp", async (req, res) => {
     text: `Hello!\n\nYour OTP code is: ${otp}\n\nThanks.`,
   };
 
-  transporter.sendMail(mailOptions, (err, info) => {
+  transporter.sendMail(mailOptions, async (err, info) => {
     if (err) {
       console.error("❌ Email error:", err);
       return res.status(500).send("Failed to send OTP");
     }
+
     console.log("✅ OTP email sent:", info.response);
+
+    // ✅ Log OTP usage
+    await OtpLog.create({ email });
+
     res.send("OTP sent successfully");
   });
 });
@@ -84,11 +110,7 @@ app.post("/verify-otp", async (req, res) => {
 });
 
 // ✅ Start server
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
-  app.get('/', (req, res) => {
-  res.send('✅ OTP Backend is Running');
-});
-
 });
