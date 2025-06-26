@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.51976aea.css",
+    "main.js": "/static/js/main.6c54eb8c.js",
+    "static/media/mail-sound.mp3": "/static/media/mail-sound.a7b56649c4c1c5a8adb0.mp3",
+    "static/media/success-sound.mp3": "/static/media/success-sound.ca148c4d1d41baa19984.mp3",
+    "index.html": "/index.html",
+    "main.51976aea.css.map": "/static/css/main.51976aea.css.map",
+    "main.6c54eb8c.js.map": "/static/js/main.6c54eb8c.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.51976aea.css",
+    "static/js/main.6c54eb8c.js"
+  ]
+}

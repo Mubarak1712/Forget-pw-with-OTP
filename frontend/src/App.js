@@ -8,7 +8,7 @@ function App() {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [stage, setStage] = useState('email'); // email, otp
+  const [stage, setStage] = useState('email');
   const [isSuccess, setIsSuccess] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -19,7 +19,7 @@ function App() {
 
   const handleSendOTP = async () => {
     try {
-      const res = await fetch('http://localhost:5000/send-otp', {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -36,13 +36,13 @@ function App() {
       }
     } catch (err) {
       console.error(err);
-      setMessage('❌ Error occurred.');
+      setMessage(`❌ ${err.message}`);
     }
   };
 
   const handleVerifyOTP = async () => {
     try {
-      const res = await fetch('http://localhost:5000/verify-otp', {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, newPassword }),
@@ -59,7 +59,8 @@ function App() {
       }
     } catch (err) {
       console.error(err);
-      setMessage('❌ Error occurred.');
+      setMessage(`❌ ${err.response?.data?.message || err.message}`);
+
     }
   };
 
