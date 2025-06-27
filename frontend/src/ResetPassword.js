@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "./App.css";
-import successSound from "./success.mp3"; // Make sure success.mp3 is in public folder
 
 function ResetPassword() {
   const [email, setEmail] = useState("");
@@ -21,8 +20,8 @@ function ResetPassword() {
 
       if (response.ok) {
         console.log("✅ OTP sent:", data);
-        new Audio(process.env.PUBLIC_URL + "/success.mp3").play(); // play sound from public folder
-        setOtpSent(true);  // show OTP entry
+        new Audio(process.env.PUBLIC_URL + "/send.mp3").play(); // ✅ play send sound
+        setOtpSent(true);  // show OTP entry form
         alert("OTP sent successfully!");
       } else {
         console.error("❌ Error sending OTP:", data);
@@ -46,8 +45,10 @@ function ResetPassword() {
       const data = await response.text();
 
       if (response.ok) {
+        console.log("✅ Password reset successful!");
+        new Audio(process.env.PUBLIC_URL + "/success.mp3").play(); // ✅ play success sound
         alert("✅ Password reset successful!");
-        window.location.href = "/";
+        window.location.href = "/"; // redirect to homepage
       } else {
         console.error("❌ Error verifying OTP:", data);
         alert("Failed to verify OTP: " + data);
