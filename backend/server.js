@@ -6,7 +6,12 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 
 const app = express();
-app.use(cors());
+
+// ✅ Allow all origins for dev; change to your frontend URL in production
+app.use(cors({
+  origin: "*", // e.g., 'https://your-frontend.netlify.app' in production
+}));
+
 app.use(express.json());
 
 // ✅ Connect to MongoDB
