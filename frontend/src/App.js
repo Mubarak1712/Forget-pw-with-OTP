@@ -1,19 +1,18 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./Navbar";            // ✅ use your Navbar component
 import Home from "./Home";
 import About from "./About";
-import ResetPassword from "./resetPassword"; // ✅ USE this below
-import Navbar from "./Navbar";
-import './App.css';
+import ResetPassword from "./ResetPassword"; // ✅ match your actual file name
 
 function App() {
   return (
     <Router>
-      <Navbar />
+      <Navbar />                          {/* ✅ navbar shows on all pages */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
-        <Route path="/reset" element={<ResetPassword />} /> {/* ✅ FIXED */}
+        <Route path="/reset" element={<ResetPassword />} />
       </Routes>
     </Router>
   );

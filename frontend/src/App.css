@@ -85,3 +85,45 @@ button:hover {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
 }
+/* Make app responsive on mobile */
+@media screen and (max-width: 768px) {
+  body {
+    padding: 0 10px; /* small padding for mobile */
+  }
+
+  .container, .home-container, .reset-container, .about-container {
+    flex-direction: column; /* stack items vertically */
+    align-items: center;
+    text-align: center;
+    padding: 1rem 0;
+  }
+
+  .container img, .home-container img, .reset-container img, .about-container img {
+    width: 80%; /* make images fit nicely */
+    max-width: 300px;
+  }
+
+  .container h1, .home-container h1, .reset-container h1, .about-container h1 {
+    font-size: 1.8rem; /* smaller headings */
+  }
+
+  .container p, .home-container p, .reset-container p, .about-container p,
+  .container .description, .about-container .description {
+    font-size: 1rem; /* smaller paragraphs */
+  }
+
+  .otp-input, .email-input, .password-input, .reset-button, .resend-button {
+    width: 100% !important; /* make inputs/buttons full-width on mobile */
+    max-width: 300px;
+    font-size: 1rem;
+    margin: 0.5rem 0;
+  }
+
+  .success-text {
+    font-size: 1.5rem; /* scale down success text */
+  }
+
+  .celebrate-img {
+    width: 200px; /* smaller celebrate image */
+  }
+}

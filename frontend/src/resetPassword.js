@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // ✅ Import Link here
 import './App.css';
 
 function ResetPassword() {
@@ -11,7 +12,6 @@ function ResetPassword() {
   const [timer, setTimer] = useState(60);
   const [resendAvailable, setResendAvailable] = useState(false);
 
-  // Countdown timer
   useEffect(() => {
     let interval;
     if (step === 2 && timer > 0) {
@@ -23,32 +23,29 @@ function ResetPassword() {
     return () => clearInterval(interval);
   }, [timer, step]);
 
-  // 🔘 Send OTP
   const handleSendOTP = async () => {
-  try {
-    const sound = new Audio("/send.mp3"); // ✅ This file should already exist in public/
-    sound.play();
+    try {
+      const sound = new Audio("/send.mp3");
+      sound.play();
 
-    const res = await fetch(`${process.env.REACT_APP_BACKEND}/send-otp`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
+      const res = await fetch(`${process.env.REACT_APP_BACKEND}/send-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
-    const data = await res.text();
-    setMessage(data);
-    if (res.ok) {
-      setStep(2);
-      setTimer(60);
-      setResendAvailable(false);
+      const data = await res.text();
+      setMessage(data);
+      if (res.ok) {
+        setStep(2);
+        setTimer(60);
+        setResendAvailable(false);
+      }
+    } catch (err) {
+      setMessage("Failed to send OTP.");
     }
-  } catch (err) {
-    setMessage("Failed to send OTP.");
-  }
-};
+  };
 
-
-  // ✅ Verify OTP
   const handleVerifyOTP = async () => {
     try {
       const res = await fetch(`${process.env.REACT_APP_BACKEND}/verify-otp`, {
@@ -76,6 +73,9 @@ function ResetPassword() {
       <div className="page">
         <h2 className="success-text">🎉 Password Reset Successfully!</h2>
         <img src="/mail.png" className="celebrate-img" alt="Success" />
+        <Link to="/">
+          <button className="home-btn">Back to Home</button>
+        </Link>
       </div>
     );
   }
@@ -118,6 +118,10 @@ function ResetPassword() {
         </>
       )}
       <p>{message}</p>
+
+      <Link to="/">
+        <button className="home-btn">Back to Home</button>
+      </Link>
     </div>
   );
 }
