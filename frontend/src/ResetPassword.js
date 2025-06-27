@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 
 function ResetPassword() {
@@ -6,6 +6,17 @@ function ResetPassword() {
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [timer, setTimer] = useState(60); // ⏳ Timer added
+
+  // ⏱ Start countdown when OTP is sent
+  useEffect(() => {
+    if (otpSent && timer > 0) {
+      const countdown = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(countdown);
+    }
+  }, [otpSent, timer]);
 
   const sendOtp = async (e) => {
     e.preventDefault();
@@ -22,6 +33,7 @@ function ResetPassword() {
         console.log("✅ OTP sent:", data);
         new Audio(process.env.PUBLIC_URL + "/send.mp3").play(); // ✅ play send sound
         setOtpSent(true);  // show OTP entry form
+        setTimer(60); // ⏱ start timer on OTP sent
         alert("OTP sent successfully!");
       } else {
         console.error("❌ Error sending OTP:", data);
@@ -46,9 +58,16 @@ function ResetPassword() {
 
       if (response.ok) {
         console.log("✅ Password reset successful!");
-        new Audio(process.env.PUBLIC_URL + "/success.mp3").play(); // ✅ play success sound
+
+        // ✅ Play success sound and delay redirect
+        const successAudio = new Audio(process.env.PUBLIC_URL + "/success.mp3");
+        successAudio.play().catch((err) => console.warn("🔇 Sound error:", err));
+
         alert("✅ Password reset successful!");
-        window.location.href = "/"; // redirect to homepage
+
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 2000); // ⏳ 2-second delay so sound can play
       } else {
         console.error("❌ Error verifying OTP:", data);
         alert("Failed to verify OTP: " + data);
@@ -62,6 +81,7 @@ function ResetPassword() {
   return (
     <div className="page">
       <h1 className="reset-heading">Reset Your Password</h1>
+
       {!otpSent ? (
         <form onSubmit={sendOtp}>
           <input
@@ -75,25 +95,36 @@ function ResetPassword() {
           <button type="submit" className="reset-button">Send OTP</button>
         </form>
       ) : (
-        <form onSubmit={verifyOtp}>
-          <input
-            type="text"
-            placeholder="Enter OTP"
-            className="otp-input"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Enter New Password"
-            className="password-input"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-          />
-          <button type="submit" className="reset-button">Verify & Reset Password</button>
-        </form>
+        <>
+          {/* ⏱ Show timer */}
+          {timer > 0 ? (
+            <p style={{ color: "red", fontWeight: "bold" }}>
+              ⏳ OTP expires in: {timer} seconds
+            </p>
+          ) : (
+            <p style={{ color: "gray" }}>⛔ OTP expired. Please request again.</p>
+          )}
+
+          <form onSubmit={verifyOtp}>
+            <input
+              type="text"
+              placeholder="Enter OTP"
+              className="otp-input"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Enter New Password"
+              className="password-input"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+            />
+            <button type="submit" className="reset-button">Verify & Reset Password</button>
+          </form>
+        </>
       )}
     </div>
   );
