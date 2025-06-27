@@ -7,11 +7,17 @@ const mongoose = require("mongoose");
 
 const app = express();
 
-// ✅ Allow all origins for dev; change to your frontend URL in production
-app.use(cors({
-  origin: "*", // e.g., 'https://your-frontend.netlify.app' in production
-}));
+// ✅ Reliable CORS: allow local and deployed frontend origins
+const corsOptions = {
+  origin: [
+    "http://localhost:3000",                      // your React app in development
+    "https://forget-pw-with-otp.netlify.app"      // your deployed frontend on Netlify
+  ],
+  methods: ["GET", "POST"],
+  credentials: true
+};
 
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // ✅ Connect to MongoDB
