@@ -126,4 +126,17 @@ button:hover {
   .celebrate-img {
     width: 200px; /* smaller celebrate image */
   }
+  .reset-heading {
+  text-align: center;
+  margin-top: 2rem; /* optional: space from top */
+  font-size: 2rem; /* optional: adjust as you like */
+  color: #333;     /* optional: text color */
+}
+.reset-heading {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 2rem;
+  color: #333;
+}
+
 }

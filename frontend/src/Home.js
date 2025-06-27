@@ -10,7 +10,7 @@ function Home() {
       <img src="/mail.png" alt="Reset Illustration" className="home-img" />
 
       <Link to="/reset">
-        <button className="home-btn">Start Reset</button>
+        <button className="home-btn">Reset Password</button>
       </Link>
     </div>
   );

@@ -5,7 +5,7 @@ function About() {
     <div className="page">
       <h2 className="main-title">About Me</h2>
       <p className="about-text">
-        Hi! I’m <strong>Pathan Mubarak</strong>, a passionate student at <strong>NECN</strong> (Narayana Engineering College, Nellore). I love building creative web applications and exploring new technologies.
+        Hi! I’m <strong>Pathan Mubarak</strong>, a student at <strong>NECN</strong> (Narayana Engineering College, Nellore). I love building creative web applications and exploring new technologies.
       </p>
       <p className="about-text">
         This project is part of my learning journey, where I implemented a secure password reset system using OTP. My goal is to make user experiences smoother, safer, through simple and effective designs.
