@@ -1,24 +1,16 @@
 require("dotenv").config();
-
 const express = require("express");
-const nodemailer = require("nodemailer");
 const cors = require("cors");
-const mongoose = require("mongoose");
+const nodemailer = require("nodemailer");
 
 const app = express();
-
-// ✅ CORS: allow your local dev + deployed frontend
-const corsOptions = {
-  origin: [
-    "http://localhost:3000",                   // dev frontend
-    "https://forget-pw-with-otp.netlify.app"   // your deployed frontend
-  ],
+app.use(cors({
+  origin: "*",
   methods: ["GET", "POST"],
   credentials: true
-};
-app.use(cors(corsOptions));
-
+}));
 app.use(express.json());
+
 
 // ✅ Connect to MongoDB
 mongoose.connect(process.env.MONGO_URL, {
@@ -44,12 +36,12 @@ const OtpLog = mongoose.model("OtpLog", new mongoose.Schema({
   }
 }));
 
-// ✅ Root route
+// ✅ Root test route
 app.get('/', (req, res) => {
   res.send('✅ OTP Backend is Running');
 });
 
-// ✅ OTP usage count route
+// ✅ OTP usage count
 app.get('/otp-usage-count', async (req, res) => {
   try {
     const count = await OtpLog.countDocuments();
@@ -60,10 +52,9 @@ app.get('/otp-usage-count', async (req, res) => {
   }
 });
 
-// ✅ Send OTP route
+// ✅ Send OTP
 app.post("/send-otp", async (req, res) => {
   const { email } = req.body;
-
   if (!email) return res.status(400).send("Email is required");
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -99,10 +90,9 @@ app.post("/send-otp", async (req, res) => {
   });
 });
 
-// ✅ Verify OTP & reset password
+// ✅ Verify OTP
 app.post("/verify-otp", async (req, res) => {
   const { email, otp, newPassword } = req.body;
-
   if (!email || !otp || !newPassword)
     return res.status(400).send("Email, OTP and New Password are required");
 
@@ -118,7 +108,7 @@ app.post("/verify-otp", async (req, res) => {
   }
 });
 
-// ✅ Start server
+// ✅ Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
