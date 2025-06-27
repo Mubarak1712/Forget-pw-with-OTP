@@ -7,17 +7,17 @@ const mongoose = require("mongoose");
 
 const app = express();
 
-// ✅ Reliable CORS: allow local and deployed frontend origins
+// ✅ CORS: allow your local dev + deployed frontend
 const corsOptions = {
   origin: [
-    "http://localhost:3000",                      // your React app in development
-    "https://forget-pw-with-otp.netlify.app"      // your deployed frontend on Netlify
+    "http://localhost:3000",                   // dev frontend
+    "https://forget-pw-with-otp.netlify.app"   // your deployed frontend
   ],
   methods: ["GET", "POST"],
   credentials: true
 };
-
 app.use(cors(corsOptions));
+
 app.use(express.json());
 
 // ✅ Connect to MongoDB
@@ -60,7 +60,7 @@ app.get('/otp-usage-count', async (req, res) => {
   }
 });
 
-// ✅ Route to send OTP
+// ✅ Send OTP route
 app.post("/send-otp", async (req, res) => {
   const { email } = req.body;
 
@@ -94,14 +94,12 @@ app.post("/send-otp", async (req, res) => {
 
     console.log("✅ OTP email sent:", info.response);
 
-    // ✅ Log OTP usage
     await OtpLog.create({ email });
-
     res.send("OTP sent successfully");
   });
 });
 
-// ✅ Route to verify OTP and reset password
+// ✅ Verify OTP & reset password
 app.post("/verify-otp", async (req, res) => {
   const { email, otp, newPassword } = req.body;
 
