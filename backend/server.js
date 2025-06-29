@@ -8,6 +8,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ✅ Home route to show backend is live
+app.get("/", (req, res) => {
+  res.send("✅ Backend is running successfully!");
+});
+
 // Temporary in-memory OTP store (reset on server restart)
 const otpStore = {};  // Structure: { email: "123456" }
 
