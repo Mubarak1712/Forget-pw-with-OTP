@@ -3,25 +3,37 @@ const express = require("express");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
+const OtpLog = require("./models/Otplog"); // ✅ Added: For tracking emails
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ Home route to show backend is live
+// ✅ Connect to MongoDB (if not already connected)
+mongoose.connect(process.env.MONGO_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => console.log("✅ Connected to MongoDB"))
+  .catch(err => console.error("❌ MongoDB connection error:", err));
+
+// ✅ Home route
 app.get("/", (req, res) => {
   res.send("✅ Backend is running successfully!");
 });
 
-// Temporary in-memory OTP store (reset on server restart)
-const otpStore = {};  // Structure: { email: "123456" }
+// ✅ Temporary OTP memory store
+const otpStore = {}; // { email: "123456" }
 
+// ✅ Send OTP route
 app.post("/send-otp", async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).send("Email required");
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  otpStore[email] = otp; // ✅ Save OTP for verification
+  otpStore[email] = otp;
+
+  // ✅ Track the email
+  await OtpLog.create({ email });
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -47,6 +59,7 @@ app.post("/send-otp", async (req, res) => {
   }
 });
 
+// ✅ Verify OTP and reset password
 app.post("/verify-otp", async (req, res) => {
   const { email, otp, newPassword } = req.body;
 
@@ -54,19 +67,27 @@ app.post("/verify-otp", async (req, res) => {
     return res.status(400).send("All fields are required");
   }
 
-  // ✅ Match OTP
   if (otpStore[email] !== otp) {
     return res.status(400).send("Invalid or expired OTP");
   }
 
-  // You can now update the password in DB here if needed (omitted for simplicity)
-
-  // ✅ Clear the OTP after use
   delete otpStore[email];
 
+  // You can update the password in DB here if needed
   res.send("OTP verified and password reset successful");
 });
 
+// ✅ Optional: View list of used emails
+app.get("/otp-logs", async (req, res) => {
+  try {
+    const logs = await OtpLog.find().sort({ requestedAt: -1 });
+    res.json(logs);
+  } catch (err) {
+    res.status(500).send("Error fetching logs");
+  }
+});
+
+// ✅ Start server
 app.listen(5000, () => {
   console.log("✅ Backend running on port 5000");
 });
